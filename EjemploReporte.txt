@@ -1,0 +1,93 @@
+
+<?php
+    require('./fpdf/fpdf.php');
+    include('includes/dbconnection.php');
+
+    $cid=$_GET['vid'];
+
+    //$ret=mysqli_query($con,"select RegistrationNumber, OwnerName from tblvehicle where ID='$cid'");
+    //$cnt=1;
+
+    //$row=mysqli_fetch_array($ret);
+
+    $sql = "SELECT RegistrationNumber, OwnerName from tblvehicle where ID='$cid'";
+    $result=mysqli_query($con, $sql);
+
+    class PDF extends FPDF{
+
+        // Cabecera de página
+        function Header(){
+            // Logo
+            $this->Image('./images/logoEUV2.png',10,10,50);
+    
+            // Arial bold 15
+            $this->SetFont('Arial','B',18);
+    
+            // Movernos a la derecha
+            $this->Cell(70);
+    
+            // Título
+            $this->Cell(70,10,'Universidad Veracruzana',0,0,'C');
+    
+            // Salto de línea
+    
+            //Dirección
+            $this->Ln();
+            $this->SetFont('Times','',15);
+            $this->Cell(60);
+            $this->Cell(70, 10,'Facultad de contaduria y administracion', 0,1,'');
+    
+            //Fecha
+            $this->Ln(10);
+            $this->Cell(145);
+            $this->SetFont('Arial','B',14);
+            $this->Cell(20, 10,'Fecha:', 0,0,'');
+            $this->SetFont('Arial','',14);
+            $this->Cell(20, 10,date('d/m/Y'), 0,1,'');
+            $this->Ln(10);
+    
+    
+        }
+    
+        // Pie de página
+        function Footer(){
+    
+            // Posición: a 1,5 cm del final
+            $this->SetY(-15);
+            // Arial italic 8
+            $this->SetFont('Arial','I',8);
+            // Número de página
+            $this->Cell(0,10,utf8_decode('Página').$this->PageNo().'/{nb}',0,0,'C');
+    
+        }
+    }
+    
+        // Creación del objeto de la clase heredada
+    
+        $pdf = new PDF();
+        $pdf->AliasNbPages();
+        $pdf->AddPage();
+    
+        $pdf->SetFillColor(232,232,232);
+        $pdf->SetFont('Arial','B',12);
+        $pdf->Cell(15,6,'ID',1,0,'C',1);
+        $pdf->Cell(35,6,'Nombre',1,0,'C',1);
+        $pdf->Cell(35,6,'Apellido',1,0,'C',1);
+        $pdf->Cell(52,6,'Email',1,0,'C',1);
+        $pdf->Cell(22,6,'Telefono',1,0,'C',1);
+        $pdf->Cell(33,6,'RFC',1,1,'C',1);
+        
+        $pdf->SetFont('Arial','',10);
+    
+        while($row = $result->fetch_assoc())
+        {
+            $pdf->Cell(15,6,utf8_decode($row['RegistrationNumber']),1,0,'C');
+            $pdf->Cell(35,6,utf8_decode($row['OwnerName']),1,1,'C');
+            
+        }
+        $pdf->Output();
+    
+    
+
+
+?>
