@@ -9,4 +9,4 @@ How to run the Vehicle Parking Management System Project
 7.Run the script http://localhost/vpms (frontend)
 
 Username: admin
-Password: Test @123
+Password: Test@123
